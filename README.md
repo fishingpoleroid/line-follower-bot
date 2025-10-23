@@ -1,2 +1,1 @@
-# line-follower-bot
-<img width="1099" height="609" alt="image" src="https://github.com/user-attachments/assets/1b0b8f31-fa25-49b3-ad15-4621f2a99b6a" />
+<img width="1088" height="728" alt="image" src="https://github.com/user-attachments/assets/6ce8c06e-0b23-4e2b-b5bc-4908c53c45d3" />
