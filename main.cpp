@@ -1,144 +1,95 @@
-#define SENSOR_FAR_LEFT   2
-#define SENSOR_LEFT       3
-#define SENSOR_CENTER     4
-#define SENSOR_RIGHT      7
-#define SENSOR_FAR_RIGHT  8
+#define MOTOR_L_IN_1     13
+#define MOTOR_L_IN_2     12
+#define MOTOR_R_IN_1     11
+#define MOTOR_R_IN_2     10
 
-#define MOTOR_L_IN_1  10
-#define MOTOR_L_IN_2  11
-#define MOTOR_R_IN_1 12
-#define MOTOR_R_IN_2 13
+#define MOTOR_L_ENA      5
+#define MOTOR_R_ENA      6
 
-#define MOTOR_L_ENA 5
-#define MOTOR_R_ENA 6
+#define SENSOR_FAR_LEFT  2
+#define SENSOR_LEFT      3
+#define SENSOR_CENTER    4
+#define SENSOR_RIGHT     7
+#define SENSOR_FAR_RIGHT 8
 
-int baseSpeed = 120; 
-int mediumTurnSpeed = 150;
-int hardTurnSpeed = 180;
+double error = 0;
+double previousError = 0;
+double integral = 0;
+double derivative = 0;
+double Kp = 0.05;
+double Ki = 0.0001;
+double Kd = 0.1;
+double PIDvalue = 0;
 
-int softOffset = 30;
-int medOffset = 50;
-int hardOffset = 80;
+int baseSpeed = 150;
+int sensors[5];
 
 void setup() {
   pinMode(MOTOR_L_IN_1, OUTPUT);
   pinMode(MOTOR_L_IN_2, OUTPUT);
   pinMode(MOTOR_R_IN_1, OUTPUT);
   pinMode(MOTOR_R_IN_2, OUTPUT);
+  pinMode(MOTOR_L_ENA, OUTPUT);
+  pinMode(MOTOR_R_ENA, OUTPUT);
 
   pinMode(SENSOR_FAR_LEFT, INPUT);
   pinMode(SENSOR_LEFT, INPUT);
   pinMode(SENSOR_CENTER, INPUT);
   pinMode(SENSOR_RIGHT, INPUT);
   pinMode(SENSOR_FAR_RIGHT, INPUT);
-}
-
-void goForward() {
+  
   digitalWrite(MOTOR_L_IN_1, HIGH);
   digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
   digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
-  analogWrite(MOTOR_L_ENA, baseSpeed);
-  analogWrite(MOTOR_R_ENA, baseSpeed);
-}
-
-void softLeft() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
-  analogWrite(MOTOR_L_ENA, baseSpeed - softOffset);
-  analogWrite(MOTOR_R_ENA, baseSpeed);
-}
-
-void softRight() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
-  analogWrite(MOTOR_L_ENA, baseSpeed);
-  analogWrite(MOTOR_R_ENA, baseSpeed - softOffset);
-}
-
-void mediumLeft() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
-  analogWrite(MOTOR_L_ENA, mediumTurnSpeed - medOffset);
-  analogWrite(MOTOR_R_ENA, mediumTurnSpeed);
-}
-
-void mediumRight() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
-  analogWrite(MOTOR_L_ENA, mediumTurnSpeed);
-  analogWrite(MOTOR_R_ENA, mediumTurnSpeed - medOffset);
-}
-
-void hardLeft() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
-  analogWrite(MOTOR_L_ENA, hardTurnSpeed - hardOffset);
-  analogWrite(MOTOR_R_ENA, hardTurnSpeed);
-}
-
-void hardRight() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
-  analogWrite(MOTOR_L_ENA, hardTurnSpeed);
-  analogWrite(MOTOR_R_ENA, hardTurnSpeed - hardOffset);
-}
-
-void stop() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, HIGH);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-  digitalWrite(MOTOR_R_IN_2, HIGH);
 }
 
 void loop() {
-  bool sFL = digitalRead(SENSOR_FAR_LEFT);
-  bool sL  = digitalRead(SENSOR_LEFT);
-  bool sC  = digitalRead(SENSOR_CENTER);
-  bool sR  = digitalRead(SENSOR_RIGHT);
-  bool sFR = digitalRead(SENSOR_FAR_RIGHT);
+  calculateError();
+  calculatePID();
+  adjustMotors();
+}
 
-  if (!sFL && !sL && sC && !sR && !sFR) {
-    goForward();
+void calculateError() {
+  sensors[0] = digitalRead(SENSOR_FAR_LEFT);
+  sensors[1] = digitalRead(SENSOR_LEFT);
+  sensors[2] = digitalRead(SENSOR_CENTER);
+  sensors[3] = digitalRead(SENSOR_RIGHT);
+  sensors[4] = digitalRead(SENSOR_FAR_RIGHT);
+  
+  long weightedSum = (long)sensors[0] * 0
+    + (long)sensors[1] * 1000
+    + (long)sensors[2] * 2000
+    + (long)sensors[3] * 3000
+    + (long)sensors[4] * 4000;
+  
+  int sum = sensors[0] + sensors[1] + sensors[2] + sensors[3] + sensors[4];
+  
+  long weightedAverage = weightedSum / sum;
+  
+  if (sum == 0) {
+    error = previousError;
+  } else {
+    error = weightedAverage - 2000;
   }
-  else if (!sFL && sL && sC && !sR && !sFR) {
-    softLeft();
-  }
-  else if (!sFL && !sL && sC && sR && !sFR) {
-    softRight();
-  }
-  else if (!sFL && sL && !sC && !sR && !sFR) {
-    mediumLeft();
-  }
-  else if (!sFL && !sL && !sC && sR && !sFR) {
-    mediumRight();
-  }
-  else if (sFL) {
-    hardLeft();
-  }
-  else if (sFR) {
-    hardRight();
-  }
-  else if (!sFL && !sL && !sC && !sR && !sFR) {
-    stop();
-  }
+}
+
+void calculatePID() {
+  integral += error;
+  derivative = error - previousError;
+  
+  double P = Kp * error;
+  double I = Ki * integral;
+  double D = Kd * derivative;
+  
+  PIDvalue = P + I + D;
+  previousError = error;
+}
+
+void adjustMotors() {
+  int leftSpeed = constrain(baseSpeed + PIDvalue, 0, 255);
+  int rightSpeed = constrain(baseSpeed - PIDvalue, 0, 255);
+  
+  analogWrite(MOTOR_L_ENA, leftSpeed);
+  analogWrite(MOTOR_R_ENA, rightSpeed);
 }
