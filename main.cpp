@@ -31,83 +31,51 @@ void setup() {
   pinMode(SENSOR_CENTER, INPUT);
   pinMode(SENSOR_RIGHT, INPUT);
   pinMode(SENSOR_FAR_RIGHT, INPUT);
-}
-
-void goForward() {
+  
   digitalWrite(MOTOR_L_IN_1, HIGH);
   digitalWrite(MOTOR_L_IN_2, LOW);
   digitalWrite(MOTOR_R_IN_2, LOW);
   digitalWrite(MOTOR_R_IN_1, HIGH);
+}
 
+void goForward() {
   analogWrite(MOTOR_L_ENA, baseSpeed);
   analogWrite(MOTOR_R_ENA, baseSpeed);
 }
 
 void softLeft() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
   analogWrite(MOTOR_L_ENA, baseSpeed - softOffset);
   analogWrite(MOTOR_R_ENA, baseSpeed);
 }
 
 void softRight() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
   analogWrite(MOTOR_L_ENA, baseSpeed);
   analogWrite(MOTOR_R_ENA, baseSpeed - softOffset);
 }
 
 void mediumLeft() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
   analogWrite(MOTOR_L_ENA, mediumTurnSpeed - medOffset);
   analogWrite(MOTOR_R_ENA, mediumTurnSpeed);
 }
 
 void mediumRight() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
   analogWrite(MOTOR_L_ENA, mediumTurnSpeed);
   analogWrite(MOTOR_R_ENA, mediumTurnSpeed - medOffset);
 }
 
 void hardLeft() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
   analogWrite(MOTOR_L_ENA, hardTurnSpeed - hardOffset);
   analogWrite(MOTOR_R_ENA, hardTurnSpeed);
 }
 
 void hardRight() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_2, LOW);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-
   analogWrite(MOTOR_L_ENA, hardTurnSpeed);
   analogWrite(MOTOR_R_ENA, hardTurnSpeed - hardOffset);
 }
 
 void stop() {
-  digitalWrite(MOTOR_L_IN_1, HIGH);
-  digitalWrite(MOTOR_L_IN_2, HIGH);
-  digitalWrite(MOTOR_R_IN_1, HIGH);
-  digitalWrite(MOTOR_R_IN_2, HIGH);
+  analogWrite(MOTOR_L_ENA, 0);
+  analogWrite(MOTOR_R_ENA, 0);
 }
 
 void loop() {
