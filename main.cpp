@@ -4,88 +4,110 @@
 #define SENSOR_RIGHT      7
 #define SENSOR_FAR_RIGHT  8
 
-#define MOTOR_LEFT_IN1  5
-#define MOTOR_LEFT_IN2  6
-#define MOTOR_RIGHT_IN1 9
-#define MOTOR_RIGHT_IN2 10
+#define MOTOR_L_IN_1  10
+#define MOTOR_L_IN_2  11
+#define MOTOR_R_IN_1 12
+#define MOTOR_R_IN_2 13
 
+#define MOTOR_L_ENA 5
+#define MOTOR_R_ENA 6
 
-int baseSpeed = 12; 
-int mediumTurnSpeed = 15;
-int hardTurnSpeed = 18;
+int baseSpeed = 120; 
+int mediumTurnSpeed = 150;
+int hardTurnSpeed = 180;
 
-int offset = 3;
+int softOffset = 30;
+int medOffset = 50;
+int hardOffset = 80;
 
 void setup() {
-  pinMode(MOTOR_LEFT_IN1, OUTPUT);
-  pinMode(MOTOR_LEFT_IN2, OUTPUT);
-  pinMode(MOTOR_RIGHT_IN1, OUTPUT);
-  pinMode(MOTOR_RIGHT_IN2, OUTPUT);
+  pinMode(MOTOR_L_IN_1, OUTPUT);
+  pinMode(MOTOR_L_IN_2, OUTPUT);
+  pinMode(MOTOR_R_IN_1, OUTPUT);
+  pinMode(MOTOR_R_IN_2, OUTPUT);
 
   pinMode(SENSOR_FAR_LEFT, INPUT);
   pinMode(SENSOR_LEFT, INPUT);
   pinMode(SENSOR_CENTER, INPUT);
   pinMode(SENSOR_RIGHT, INPUT);
   pinMode(SENSOR_FAR_RIGHT, INPUT);
-
-  Serial.begin(9600);
 }
 
-
 void goForward() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  analogWrite(MOTOR_LEFT_IN2, baseSpeed);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
-  analogWrite(MOTOR_RIGHT_IN1, baseSpeed);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+
+  analogWrite(MOTOR_L_ENA, baseSpeed);
+  analogWrite(MOTOR_R_ENA, baseSpeed);
 }
 
 void softLeft() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  analogWrite(MOTOR_LEFT_IN2, baseSpeed - offset);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
-  analogWrite(MOTOR_RIGHT_IN1, baseSpeed);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+
+  analogWrite(MOTOR_L_ENA, baseSpeed - softOffset);
+  analogWrite(MOTOR_R_ENA, baseSpeed);
 }
 
 void softRight() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  analogWrite(MOTOR_LEFT_IN2, baseSpeed);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
-  analogWrite(MOTOR_RIGHT_IN1, baseSpeed - offset);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+
+  analogWrite(MOTOR_L_ENA, baseSpeed);
+  analogWrite(MOTOR_R_ENA, baseSpeed - softOffset);
 }
 
 void mediumLeft() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  analogWrite(MOTOR_LEFT_IN2, mediumTurnSpeed - offset);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
-  analogWrite(MOTOR_RIGHT_IN1, mediumTurnSpeed);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+
+  analogWrite(MOTOR_L_ENA, mediumTurnSpeed - medOffset);
+  analogWrite(MOTOR_R_ENA, mediumTurnSpeed);
 }
 
 void mediumRight() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  analogWrite(MOTOR_LEFT_IN2, mediumTurnSpeed);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
-  analogWrite(MOTOR_RIGHT_IN1, mediumTurnSpeed - offset);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+
+  analogWrite(MOTOR_L_ENA, mediumTurnSpeed);
+  analogWrite(MOTOR_R_ENA, mediumTurnSpeed - medOffset);
 }
 
 void hardLeft() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  analogWrite(MOTOR_LEFT_IN2, hardTurnSpeed - offset);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
-  analogWrite(MOTOR_RIGHT_IN1, hardTurnSpeed);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+
+  analogWrite(MOTOR_L_ENA, hardTurnSpeed - hardOffset);
+  analogWrite(MOTOR_R_ENA, hardTurnSpeed);
 }
 
 void hardRight() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  analogWrite(MOTOR_LEFT_IN2, hardTurnSpeed);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
-  analogWrite(MOTOR_RIGHT_IN1, hardTurnSpeed - offset);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_2, LOW);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+
+  analogWrite(MOTOR_L_ENA, hardTurnSpeed);
+  analogWrite(MOTOR_R_ENA, hardTurnSpeed - hardOffset);
 }
 
 void stop() {
-  digitalWrite(MOTOR_LEFT_IN1, LOW);
-  digitalWrite(MOTOR_LEFT_IN2, LOW);
-  digitalWrite(MOTOR_RIGHT_IN1, LOW);
-  digitalWrite(MOTOR_RIGHT_IN2, LOW);
+  digitalWrite(MOTOR_L_IN_1, HIGH);
+  digitalWrite(MOTOR_L_IN_2, HIGH);
+  digitalWrite(MOTOR_R_IN_1, HIGH);
+  digitalWrite(MOTOR_R_IN_2, HIGH);
 }
 
 void loop() {
@@ -94,14 +116,6 @@ void loop() {
   bool sC  = digitalRead(SENSOR_CENTER);
   bool sR  = digitalRead(SENSOR_RIGHT);
   bool sFR = digitalRead(SENSOR_FAR_RIGHT);
-  
-  Serial.print(sFL);
-  Serial.print(sL);
-  Serial.print(sC);
-  Serial.print(sR);
-  Serial.print(sFR);
-  Serial.println(" ");
-
 
   if (!sFL && !sL && sC && !sR && !sFR) {
     goForward();
